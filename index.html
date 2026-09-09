@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MediFind — Healthcare Finder</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f8fc;color:#102a43;font-family:Arial,sans-serif}
+.app{max-width:1220px;margin:auto;background:#fff;min-height:100vh}
+header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid #e5edf5;padding:14px 24px;display:flex;align-items:center;gap:20px}
+.logo{font-size:25px;font-weight:800;color:#123b68}.logo span{color:#10a6a0}
+.tag{font-size:11px;color:#708090}
+nav{display:flex;gap:16px;margin-left:auto}
+nav button{border:0;background:none;color:#24415d;cursor:pointer;font-weight:600}
+nav button.active{color:#0878e8;border-bottom:2px solid #0878e8;padding-bottom:5px}
+.head-actions{display:flex;gap:8px;align-items:center}
+.head-actions button,.topBtn{border:1px solid #dbe7f2;background:white;border-radius:20px;padding:9px 13px;cursor:pointer}
+.primary{background:#0878e8!important;color:white!important;border:0!important}
+main{padding:20px}
+.hero{border-radius:25px;padding:34px;min-height:330px;background:linear-gradient(115deg,#e6f7ff,#d9f3f1 55%,#edf7ff);position:relative;overflow:hidden}
+.hero h1{font-size:43px;line-height:1.05;margin:8px 0 14px;max-width:660px}
+.hero h1 span{color:#09a59e}
+.hero p{font-size:16px;line-height:1.55;max-width:680px;color:#41617d}
+.badge{display:inline-block;background:#d9f7f3;color:#087f7a;padding:9px 14px;border-radius:20px;font-weight:bold;font-size:12px}
+.search{display:flex;background:white;border:1px solid #d9e6f2;border-radius:18px;padding:7px;max-width:760px;box-shadow:0 8px 24px #0d477a16;margin-top:18px}
+.search input{border:0;outline:0;flex:1;padding:12px;font-size:14px}
+.search button{border:0;background:#0878e8;color:white;border-radius:13px;padding:0 24px;cursor:pointer}
+.hero-art{position:absolute;right:25px;bottom:-15px;font-size:115px;opacity:.35}
+.loc{margin:15px 0;padding:13px 16px;border:1px solid #dce8f3;border-radius:14px;display:flex;justify-content:space-between;align-items:center}
+.loc button{border:1px solid #bcd0e4;background:white;border-radius:18px;padding:8px 14px;cursor:pointer}
+.section{margin:27px 0}
+.section-head{display:flex;justify-content:space-between;align-items:center}
+.section h2{margin:0 0 6px;font-size:22px}
+.section-head button{border:0;background:none;color:#0878e8;cursor:pointer}
+.grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.quick,.card{border:1px solid #dfeaf4;border-radius:16px;padding:16px;background:white;box-shadow:0 4px 15px #16466b0a}
+.quick{cursor:pointer;min-height:145px}
+.quick .ico{font-size:30px}
+.quick strong{display:block;margin:10px 0 5px}
+.muted{font-size:12px;color:#71859a;line-height:1.45}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.service{cursor:pointer;min-height:120px}
+.service .ico{font-size:28px}
+.item-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.pill{display:inline-block;background:#edf6ff;color:#1765a5;border-radius:20px;padding:6px 9px;font-size:11px;margin-top:8px}
+.price{font-weight:800;font-size:18px;margin-top:8px}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.actions button,.card button{border:0;border-radius:10px;background:#0878e8;color:#fff;padding:9px 11px;cursor:pointer;font-size:12px}
+.actions .light,.card .light{background:#edf5fc;color:#184d75}
+.dangerBtn{background:#d82323!important}
+.emergency{background:linear-gradient(100deg,#0754ad,#0878e8);color:#fff;border-radius:18px;padding:20px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+.emergency button{background:white;color:#0754ad;border:0;border-radius:20px;padding:11px 18px;font-weight:bold;cursor:pointer}
+.trust{background:#eefaf9;border-radius:18px;padding:18px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.trust div{text-align:center}.trust b{display:block;margin:7px 0}
+footer{background:#112b4a;color:#fff;padding:25px;margin-top:30px;display:flex;justify-content:space-between;align-items:center}
+.footerlinks button{background:none;border:0;color:#d9e7f5;cursor:pointer;margin:4px}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:9999;align-items:center;justify-content:center;padding:15px}
+.modal.open{display:flex}
+.modalbox{background:#fff;width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:20px;padding:22px}
+.close{float:right;border:0;background:#eef2f5;border-radius:50%;width:34px;height:34px;cursor:pointer}
+.form input,.form select,.form textarea{width:100%;padding:11px;margin:7px 0;border:1px solid #d4e0ea;border-radius:10px}
+.notice{padding:12px;border-radius:12px;background:#eef8ff;margin:10px 0}
+.success{background:#eaf9ef;color:#176534}
+.danger{background:#fff0f0;color:#9b2020}
+.warning{background:#fff8df;color:#775b00}
+.empty{text-align:center;padding:25px;color:#71859a}
+.uploadBox{border:2px dashed #b9d2e7;border-radius:16px;padding:22px;text-align:center;background:#f8fbfe}
+.preview{max-width:100%;max-height:220px;border-radius:12px;margin-top:12px}
+.aiStep{display:flex;gap:12px;padding:12px;border-bottom:1px solid #edf2f6}
+.aiStep b{min-width:28px}
+.medicineRow{padding:12px;border:1px solid #dfeaf4;border-radius:12px;margin:8px 0}
+.meter{height:9px;background:#e7edf3;border-radius:20px;overflow:hidden}
+.meter i{display:block;height:100%;background:#0ba49e}
+.mapBox{height:250px;border-radius:16px;background:linear-gradient(135deg,#eef7ff,#eafaf7);position:relative;overflow:hidden;border:1px solid #dbe8f2}
+.road{position:absolute;height:12px;background:#fff;transform:rotate(-17deg);width:120%;top:52%;left:-10%;box-shadow:0 0 0 1px #d8e5ee}
+.pin{position:absolute;font-size:30px}
+.ambulance{position:absolute;font-size:30px;transition:all 1s}
+.monitor{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}
+.routeLine{padding:11px;border-left:4px solid #0878e8;background:#f5faff;margin:8px 0}
+.tagchip{display:inline-block;padding:5px 9px;border-radius:14px;background:#edf5fc;color:#18557d;font-size:11px;margin:3px}
+.small{font-size:11px}
+.rating{color:#a66a00;font-weight:800}
+.stars{letter-spacing:1px}
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.filterbar select,.filterbar button{padding:9px 11px;border:1px solid #d5e2ec;border-radius:10px;background:#fff;cursor:pointer}
+.professional-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.info-item{background:#f7fafc;border:1px solid #e3edf5;border-radius:10px;padding:9px;font-size:12px}
+.info-item b{display:block;color:#183b5b;margin-bottom:3px}
+.verifiedMark{color:#087f7a;font-weight:700}
+.statusBadge{display:inline-block;padding:6px 9px;border-radius:14px;font-size:11px;font-weight:700}
+.available{background:#e9f8ee;color:#166534}
+.busy{background:#fff6df;color:#795600}
+.unavailable{background:#fbeaea;color:#9b2020}
+.updated{font-size:11px;color:#60778d}
+.finderHero{border:1px solid #dce8f3;border-radius:18px;padding:18px;background:linear-gradient(135deg,#f5fbff,#f0fbfa);margin-bottom:14px}
+.finderStats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.finderStat{background:#fff;border:1px solid #e1ebf3;border-radius:12px;padding:12px;text-align:center}
+.finderStat b{display:block;font-size:20px;margin-bottom:3px}
+.resultCard{border:1px solid #dfeaf4;border-radius:16px;padding:16px;background:#fff;margin-top:10px}
+.resultTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.detailGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:10px}
+.detailBox{background:#f7fafc;border:1px solid #e3edf5;border-radius:10px;padding:10px;font-size:12px}
+.detailBox b{display:block;color:#183b5b;margin-bottom:3px}
+.matchScore{font-weight:800;color:#087f7a;background:#e9f8f5;padding:6px 9px;border-radius:14px;font-size:11px}
+#backBtn{display:none!important}
+#backBtn.show{display:inline-flex!important}
+#settingsModal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;z-index:99999;padding:18px}
+.settingsPanel{width:min(460px,100%);background:#fff;border-radius:18px;overflow:hidden}
+.settingsHead{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid #e5e7eb}
+.settingsBody{padding:8px 18px 18px}
+.settingRow{display:flex;align-items:center;justify-content:space-between;padding:16px 4px;border-bottom:1px solid #eef0f4;gap:15px}
+.settingMain{display:flex;align-items:center;gap:12px}
+.settingIcon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#f1f5f9;font-size:20px}
+.settingTitle{font-weight:800;color:#111827}
+.settingSub{font-size:12px;color:#6b7280;margin-top:3px}
+.switch{position:relative;width:46px;height:26px;display:inline-block}
+.switch input{display:none}
+.slider{position:absolute;inset:0;background:#cbd5e1;border-radius:30px;cursor:pointer}
+.slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked+.slider{background:#2563eb}
+.switch input:checked+.slider:before{transform:translateX(20px)}
+@media(max-width:980px){
+nav{display:none}.professional-grid{grid-template-columns:1fr}
+.grid6{grid-template-columns:repeat(3,1fr)}
+.item-grid{grid-template-columns:repeat(2,1fr)}
+.hero-art{display:none}.trust{grid-template-columns:repeat(2,1fr)}
+.monitor{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+header{padding:12px}.tag{display:none}.head-actions .guest{display:none}
+main{padding:12px}.hero{padding:22px}.hero h1{font-size:31px}
+.grid6{grid-template-columns:repeat(2,1fr)}
+.grid3{grid-template-columns:1fr}
+.item-grid{grid-template-columns:1fr}
+.trust{grid-template-columns:1fr 1fr}
+footer{display:block}
+.finderStats{grid-template-columns:repeat(2,1fr)}
+.detailGrid{grid-template-columns:1fr}
+.resultTop{display:block}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+<div>
+<div class="logo">♥ Medi<span>Find</span></div>
+<div class="tag">Find Care. Understand Medicines. Reach Help.</div>
+</div>
+
+<nav id="nav"></nav>
+
+<div class="head-actions">
+<button onclick="openNotifications()">🔔</button>
+<button class="guest" onclick="openLogin()">👤 Guest</button>
+<button class="primary" onclick="openLogin()">Sign In</button>
+</div>
+
+<div style="position:absolute;right:18px;top:12px;display:flex;gap:7px">
+<button id="backBtn" class="topBtn" onclick="goBack()">←</button>
+<button class="topBtn" onclick="openSettings()">⚙️</button>
+</div>
+</header>
+
+<main id="main"></main>
+
+<footer>
+<div>
+<b style="font-size:22px">♥ MediFind</b>
+<div class="tag">Find Care. Understand Medicines. Reach Help.</div>
+</div>
+<div class="footerlinks">
+<button onclick="showInfo('About MediFind')">About Us</button>
+<button onclick="showInfo('Privacy Policy')">Privacy</button>
+<button onclick="showInfo('Terms & Conditions')">Terms</button>
+<button onclick="showInfo('Help & Support')">Help</button>
+</div>
+</footer>
+
+</div>
+
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
+<div class="modalbox">
+<button class="close" onclick="closeModal()">×</button>
+<div id="modalContent"></div>
+</div>
+</div>
+
+<div id="settingsModal" onclick="if(event.target===this)closeSettings()">
+<div class="settingsPanel">
+<div class="settingsHead">
+<div>
+<div style="font-size:20px;font-weight:900">⚙️ Settings</div>
+<div style="font-size:12px;color:#6b7280">MediFind preferences</div>
+</div>
+<button onclick="closeSettings()" style="border:0;background:none;font-size:24px">×</button>
+</div>
+
+<div class="settingsBody">
+
+<div class="settingRow">
+<div class="settingMain">
+<div class="settingIcon">👤</div>
+<div>
+<div class="settingTitle">Profile Info</div>
+<div class="settingSub">Manage your name and basic details</div>
+</div>
+</div>
+<button onclick="profileInfo()" class="topBtn">Open</button>
+</div>
+
+<div class="settingRow">
+<div class="settingMain">
+<div class="settingIcon">🌐</div>
+<div>
+<div class="settingTitle">Language</div>
+<div class="settingSub">Choose app language</div>
+</div>
+</div>
+<select id="language" onchange="setLanguage(this.value)">
+<option>English</option>
+<option>Tamil</option>
+<option>Thanglish</option>
+</select>
+</div>
+
+<div class="settingRow">
+<div class="settingMain">
+<div class="settingIcon">🔔</div>
+<div>
+<div class="settingTitle">Notifications</div>
+<div class="settingSub">Appointment, medicine & reservation alerts</div>
+</div>
+</div>
+<label class="switch">
+<input id="notifications" type="checkbox" onchange="setNotifications(this.checked)">
+<span class="slider"></span>
+</label>
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+
+/* =========================
+   DATA
+========================= */
+
+const hospitals=[
+{
+name:"Salem Government Hospital",
+type:"Government Hospital",
+area:"Salem",
+distance:2.1,
+rating:4.4,
+reviews:520,
+beds:"42 beds available",
+open:"24 Hours",
+specialties:["Emergency","General Medicine","Cardiology"],
+phone:"0427-2210000",
+status:"Available",
+lastMin:8
+},
+{
+name:"SKS Hospital",
+type:"Private Hospital",
+area:"Salem",
+distance:3.4,
+rating:4.6,
+reviews:310,
+beds:"18 beds available",
+open:"24 Hours",
+specialties:["Cardiology","Orthopaedics","Emergency"],
+phone:"0427-2345678",
+status:"Available",
+lastMin:15
+},
+{
+name:"Kauvery Hospital",
+type:"Private Hospital",
+area:"Salem",
+distance:5.2,
+rating:4.7,
+reviews:440,
+beds:"11 beds available",
+open:"24 Hours",
+specialties:["Neurology","Cardiology","General Medicine"],
+phone:"0427-2900000",
+status:"Busy",
+lastMin:21
+}
+];
+
+const clinics=[
+{
+name:"MediCare Family Clinic",
+area:"Fairlands, Salem",
+distance:1.8,
+rating:4.5,
+reviews:180,
+open:"8 AM - 9 PM",
+specialties:["General Medicine","Diabetes"],
+fee:"₹300",
+phone:"9876543210",
+status:"Available",
+nextSlot:"Today 5:30 PM",
+lastMin:10
+},
+{
+name:"HealthPlus Clinic",
+area:"Hasthampatti, Salem",
+distance:2.7,
+rating:4.3,
+reviews:140,
+open:"9 AM - 8 PM",
+specialties:["General Medicine","Paediatrics"],
+fee:"₹250",
+phone:"9876501234",
+status:"Available",
+nextSlot:"Today 6:00 PM",
+lastMin:18
+},
+{
+name:"City Care Clinic",
+area:"Seelanaickenpatti, Salem",
+distance:4.5,
+rating:4.1,
+reviews:95,
+open:"9 AM - 8 PM",
+specialties:["General Medicine","Skin"],
+fee:"₹300",
+phone:"9876512345",
+status:"Busy",
+nextSlot:"Tomorrow 10:00 AM",
+lastMin:30
+}
+];
+
+const doctors=[
+{
+name:"Dr. Arun Kumar",
+spec:"General Physician",
+clinic:"MediCare Family Clinic",
+distance:1.8,
+experience:"12 years",
+fee:"₹400",
+rating:4.7,
+reviews:220,
+status:"Available",
+nextSlot:"Today 5:30 PM",
+phone:"9876543210",
+lastMin:6
+},
+{
+name:"Dr. Priya S",
+spec:"Cardiologist",
+clinic:"SKS Hospital",
+distance:3.4,
+experience:"15 years",
+fee:"₹700",
+rating:4.8,
+reviews:310,
+status:"Available",
+nextSlot:"Today 7:00 PM",
+phone:"9876509876",
+lastMin:12
+},
+{
+name:"Dr. Karthik R",
+spec:"Dermatologist",
+clinic:"HealthPlus Clinic",
+distance:2.7,
+experience:"8 years",
+fee:"₹500",
+rating:4.4,
+reviews:160,
+status:"Busy",
+nextSlot:"Tomorrow 11:00 AM",
+phone:"9876511122",
+lastMin:22
+},
+{
+name:"Dr. Meena V",
+spec:"Paediatrician",
+clinic:"City Care Clinic",
+distance:4.5,
+experience:"10 years",
+fee:"₹450",
+rating:4.6,
+reviews:190,
+status:"Available",
+nextSlot:"Today 8:00 PM",
+phone:"9876522233",
+lastMin:17
+}
+];
+
+const services=[
+["💊","Medicine Finder","Find medicine availability and nearby pharmacies."],
+["🤖","Specialist Finder","AI-assisted specialist recommendation."],
+["🚑","SOS Emergency","Emergency ambulance and hospital workflow."],
+["🩺","General Checkup","Find doctors and clinics for routine checkups."],
+["🛏️","Hospital Beds","Compare prototype hospital bed availability."],
+["🧪","Diagnostic Tests","Find tests and compare demo prices."],
+["📅","Appointments","Request appointments with doctors."],
+["ℹ️","Health Information","General healthcare information."]
+];
+
+const medicineDB={
+paracetamol:{
+generic:"Paracetamol 500 mg",
+use:"Fever and mild pain",
+strength:"500 mg",
+type:"Tablet"
+},
+azithromycin:{
+generic:"Azithromycin 500 mg",
+use:"Antibiotic",
+strength:"500 mg",
+type:"Tablet"
+},
+amoxicillin:{
+generic:"Amoxicillin 500 mg",
+use:"Antibiotic",
+strength:"500 mg",
+type:"Capsule"
+},
+cetirizine:{
+generic:"Cetirizine 10 mg",
+use:"Allergy symptoms",
+strength:"10 mg",
+type:"Tablet"
+}
+};
+
+const pharmacyDB=[
+{
+name:"Apollo Pharmacy - Salem",
+area:"Five Roads, Salem",
+distance:1.9,
+rating:4.5,
+reviews:230,
+open:"8 AM - 11 PM",
+phone:"9876001111",
+pharmacist:"Available",
+prescription:"Required where applicable",
+stock:"24 strips",
+price:32,
+lastMin:5,
+services:["Pickup","Home Delivery","Prescription"]
+},
+{
+name:"MedPlus - Salem",
+area:"Fairlands, Salem",
+distance:2.6,
+rating:4.3,
+reviews:190,
+open:"8 AM - 10 PM",
+phone:"9876002222",
+pharmacist:"Available",
+prescription:"Required where applicable",
+stock:"12 strips",
+price:29,
+lastMin:11,
+services:["Pickup","Home Delivery"]
+},
+{
+name:"Sri Medicals",
+area:"Hasthampatti, Salem",
+distance:3.7,
+rating:4.2,
+reviews:90,
+open:"9 AM - 9 PM",
+phone:"9876003333",
+pharmacist:"Available",
+prescription:"Required where applicable",
+stock:"Low stock",
+price:27,
+lastMin:18,
+services:["Pickup"]
+}
+];
+
+let locationName=localStorage.getItem("mfLocation")||"Salem";
+let saved=JSON.parse(localStorage.getItem("mfSaved")||"[]");
+let logged=false;
+
+let pageHistory=[];
+let currentPage="Home";
+let pageChanging=false;
+
+/* =========================
+   COMMON
+========================= */
+
+function stars(r){
+let full=Math.round(r);
+return "★".repeat(Math.min(full,5))+"☆".repeat(Math.max(0,5-full));
+}
+
+function freshAge(min){
+if(min<2)return"just now";
+if(min<60)return min+" min ago";
+return Math.floor(min/60)+" hr ago";
+}
+
+function openModal(html){
+document.getElementById("modalContent").innerHTML=html;
+document.getElementById("modal").classList.add("open");
+}
+
+function closeModal(){
+document.getElementById("modal").classList.remove("open");
+}
+
+function showInfo(title){
+openModal(`
+<h2>${title}</h2>
+<p class="muted">
+MediFind is an Expo prototype designed to help users find healthcare services,
+medicines, doctors, pharmacies and emergency support.
+</p>
+<div class="notice warning">
+Prototype data only. Real medicine stock, doctor availability, hospital beds,
+prescription OCR and ambulance dispatch require verified backend integrations.
+</div>
+<button onclick="closeModal()">Close</button>
+`);
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function page(name,addHistory=true){
+
+if(!name)name="Home";
+
+if(addHistory && currentPage!==name){
+pageHistory.push(currentPage);
+}
+
+currentPage=name;
+
+const back=document.getElementById("backBtn");
+
+if(name==="Home"){
+back.classList.remove("show");
+}else{
+back.classList.add("show");
+}
+
+if(name==="Home")homePage();
+else if(name==="Services")servicesPage();
+else if(name==="Hospitals")facilityPage("Hospitals",hospitals);
+else if(name==="Clinics")facilityPage("Clinics",clinics);
+else if(name==="Doctors")doctorsPage();
+else if(name==="Medicine")medicineFinder();
+else if(name==="Specialist")specialistFinder();
+else if(name==="SOS")emergency();
+else if(name==="Diagnostics")diagnosticTests();
+else if(name==="Beds")hospitalBeds();
+else homePage();
+
+window.scrollTo(0,0);
+}
+
+function goBack(){
+
+if(document.getElementById("modal").classList.contains("open")){
+closeModal();
+return;
+}
+
+if(pageHistory.length){
+
+let previous=pageHistory.pop();
+currentPage=previous;
+
+const back=document.getElementById("backBtn");
+
+if(previous==="Home"){
+back.classList.remove("show");
+}else{
+back.classList.add("show");
+}
+
+page(previous,false);
+
+}else{
+
+page("Home",false);
+
+}
+}
+
+/* =========================
+   HOME
+========================= */
+
+function homePage(){
+
+document.getElementById("main").innerHTML=`
+
+<section class="hero">
+
+<span class="badge">SMART HEALTHCARE FINDER</span>
+
+<h1>
+Find the right <span>care</span>, medicine & help — faster.
+</h1>
+
+<p>
+MediFind brings medicines, pharmacies, doctors, hospitals,
+clinics, diagnostic tests and emergency support into one simple platform.
+</p>
